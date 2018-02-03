@@ -16,30 +16,41 @@ var socket = io.listen(server);
 var nicknames = [];
 
 socket.on('connection', function (client){
+  Object.keys(socket.sockets).forEach(function(id) {
+console.log("ID:",id)  // socketId
+})
   client.on('new user',function(message,callback){
     if(nicknames.indexOf(message) != -1)
     callback(false);
     else {
       {
+
         callback(true);
-        socket.nickname = message;
-        nicknames.push(socket.nickname);
+        client.nickname = message;
+        nicknames.push(client.nickname);
+        socket.emit('new connect',{nick:client.nickname});
         socket.emit('usernames',nicknames);
-        updateNicknames();
+        var nickhaha = [];
+        nicknames.forEach(function(item){
+          if(item != client.nickname)
+          nickhaha.push(item);
+        });
+        updateNicknames(client.nickname);
       }
     }
   });
-  function updateNicknames(){
-       socket.emit('usernames', nicknames);
+  function updateNicknames(me){
+       socket.emit('usernames', nicknames, me);
    }
 
    client.on('send message', function(message){
-       socket.emit('new message', {msg: message, nick: socket.nickname});
+       socket.emit('new message', {msg: message, nick: client.nickname});
    });
 
    client.on('disconnect', function(message){
-       if(!socket.nickname) return;
-       nicknames.splice(nicknames.indexOf(socket.nickname), 1);
+       if(!client.nickname) return;
+       socket.emit('disconnect',{nick:client.nickname});
+       nicknames.splice(nicknames.indexOf(client.nickname), 1);
        updateNicknames();
    });
 

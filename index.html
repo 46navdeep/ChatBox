@@ -101,7 +101,7 @@
         <div class="col-lg-12">
         <nav role="navigation" class="navbar navbar-default">
                 <div class="navbar-header">
-                    <h3>Fifteen Minutes Chat Messanger</h3>
+                    <h3>CHIT CHAT</h3>
                 </div>
         </nav>
         </div>
@@ -135,7 +135,7 @@
 
                     <div class="col-lg-3">
                         <div class="panel panel-default">
-                        <div class="panel-heading"><center>Username</center></div>
+                        <div class="panel-heading"><center>ONLINE USERS</center></div>
                         <div class="panel-body" id="users"></div>
                     </div>
                     </div>
@@ -176,10 +176,7 @@
         var $chat=$('#chat');
         var i;
 
-         /* Here we are checking the validity of username.To do so a callback function is created.
-            If the username is valid then we will display the chat box, otherwise an error message is shown.
-             Here a callback comes in.Nickname is sent from server and pass it to our function socket.emit.
-            Afterwards changes have made depending on the value of that data.*/
+
 
         $nickForm.submit(function(e){
             e.preventDefault();
@@ -195,7 +192,7 @@
             });
 
             //List of users
-        socket.on('usernames', function(message){
+        socket.on('usernames', function(message,me){
             var html = '';
             for(i=0; i < message.length; i++){
                 html+= message[i] + '<br/>'
@@ -215,7 +212,13 @@
             $chat.append('<span class="glyphicon glyphicon-user"></span>'+"   "+'<b>' + message.nick +  ' : </b>'+ message.msg + "<br/>");
         });
 
-      
+      socket.on('disconnect',function(message){
+        $chat.append('<b>' + message.nick + '<p>has left the chat room</p>'+  ' </b>');
+      });
+
+      socket.on('new connect', function(message){
+        $chat.append('<b>' + message.nick + '<p>has joined the chat room</p>'+  ' </b>');
+      })
 
      });
     </script>
