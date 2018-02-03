@@ -33,11 +33,11 @@ socket.on('connection', function (client){
        socket.emit('usernames', nicknames);
    }
 
-   socket.on('send message', function(message){
-       io.sockets.emit('new message', {msg: message, nick: socket.nickname});
+   client.on('send message', function(message){
+       socket.emit('new message', {msg: message, nick: socket.nickname});
    });
 
-   socket.on('disconnect', function(message){
+   client.on('disconnect', function(message){
        if(!socket.nickname) return;
        nicknames.splice(nicknames.indexOf(socket.nickname), 1);
        updateNicknames();
