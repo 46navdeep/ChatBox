@@ -1,43 +1,223 @@
 <html>
+    <head>
 
-  <head>
-    <title>CHIT CHAT</title>
+        <title>A Chat Messenger</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
+
+    /*this style tag indicates css for navigation*/
+
+    .container{
+    background: #e5f2fa;
+    height:750px ;
+    min-width: 150px;
+    }
+
+    .row  {
+    margin-bottom: 0px;
+    min-width: 150px;
+    }
+    .navbar{
+    background: #6cabdd;
+    min-width: 150px;
+    }
+    h3{
+    font-family:"Times New Roman", Times, serif;
+    font-size:24px;
+    margin-left: 400px;
+    background: #6cabdd;
+    color:white;
+    min-width: 150px;
+    text-align:center;
+
+    }
+
     </style>
-  </head>
+    <style type="text/css">
+     .col-xs-9{
+            margin-left: 300px;
+        }
+        /* enable absolute positioning */
+        .inner-addon {
+            position: relative;
+        }
 
-  <body>
-  <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" />
-      <script src="/socket.io/socket.io.js"></script>
-  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-  <script>
-  $(function () {
-    var socket = io();
-    $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
-    });
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
-   socket.on('disconnection', function(){
-     $('#messages').append($('<li>').text("ONE OF THE USERS HAS DISCONNECTED"));
-   })
+        /* style icon */
+        .inner-addon .glyphicon {
+            position: absolute;
+            padding: 10px;
+            pointer-events: none;
+        }
 
-  });
-</script><button>Send</button>
-    </form>
+        /* align icon */
+        .left-addon .glyphicon  { left:  0px;}
+        .right-addon .glyphicon { right: 0px;}
 
-  </body>
+        /* add padding  */
+        .left-addon input  { padding-left:  30px; }
+        .right-addon input { padding-right: 30px; }
+
+         #contentWrap{
+                display: none;
+            }
+
+        #chatWrap{
+            margin-top: 20px;
+            margin-left: 120px;
+            margin-right: 120px;
+            border: 1px #ffffff solid;
+
+        }
+        #chat{
+            height:600px;
+        }
+
+        .col-lg-6,.col-lg-3,.panel{
+            height:600px;
+        }
+        .col-lg-3,.panel{
+            width: 180px;
+            border: 1px #ffffff solid;
+            margin-left: 0px;
+        }
+
+    </style>
+    </head>
+
+
+    <body>
+        <!--container holds everything-->
+        <div class="container">
+
+    <!--Start Navbar-->
+      <div class="row">
+        <div class="col-lg-12">
+        <nav role="navigation" class="navbar navbar-default">
+                <div class="navbar-header">
+                    <h3>Fifteen Minutes Chat Messanger</h3>
+                </div>
+        </nav>
+        </div>
+        </div>
+        <!--end Navbar-->
+
+      <!--Form to enter UserName-->
+        <div class="row">
+
+        <div class="col-xs-9" id="nickWrap" >
+               <p id="nickError"></p>
+               <form id="setNick">
+                 <div class="col-xs-6">
+                 <div class="inner-addon left-addon">
+                       <i class="glyphicon glyphicon-user"></i>
+                       <input id="nickname" class="form-control" placeholder="Username"/>
+                       </div>
+                 </div>
+
+                <div class="col-xs-3"><input type="submit" class="btn btn-primary"></div>
+                </form>
+         </div>
+          </div>
+         <!--end username-->
+
+        <!--Message-->
+
+           <div id="contentWrap">
+                <div id="chatWrap">
+                    <div class="row">
+
+                    <div class="col-lg-3">
+                        <div class="panel panel-default">
+                        <div class="panel-heading"><center>Username</center></div>
+                        <div class="panel-body" id="users"></div>
+                    </div>
+                    </div>
+                        <div class="col-lg-6" style="width:700px">
+                        <div id="chat"></div>
+                        <form id="send-message">
+                            <input id="message" size="80" autocomplete="off" placeholder="Write Message" style="height: 30px">
+                            <input type="submit" class="btn btn-default btn" />
+                        </form>
+                    </div>
+
+                    </div>
+                </div>
+
+         </div>
+<!--End of Message box-->
+
+ </div>  <!--End of container-->
+
+ <!--node.js and Jquery code-->
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://https://checkchat-moytri.c9users.io/socket.io/socket.io.js"></script>
+
+
+<script>
+
+ /*jshint curly:true, debug:true */
+    $(function(){
+        var socket = io();
+        var $nickForm=$('#setNick');
+        var $nickError=$('#nickError');
+        var $nickBox=$('#nickname');
+        var $users = $('#users');
+        var $messageForm=$('#send-message');
+        var $messageBox=$('#message');
+        var $chat=$('#chat');
+        var i;
+
+         /* Here we are checking the validity of username.To do so a callback function is created.
+            If the username is valid then we will display the chat box, otherwise an error message is shown.
+             Here a callback comes in.Nickname is sent from server and pass it to our function socket.emit.
+            Afterwards changes have made depending on the value of that data.*/
+
+        $nickForm.submit(function(e){
+            e.preventDefault();
+            socket.emit('new user',$nickBox.val(),function(message){
+                if(message){
+                    $('#nickWrap').hide();
+                    $('#contentWrap').show();
+                }else {
+                    $nickError.html('Username already in use. Try another name.');
+                }
+                });
+                    $nickBox.val('');
+            });
+
+            //List of users
+        socket.on('usernames', function(message){
+            var html = '';
+            for(i=0; i < message.length; i++){
+                html+= message[i] + '<br/>'
+                }
+            $users.html(html);
+            //$showName.append(html);
+        });
+
+
+        $messageForm.submit(function(e){
+            e.preventDefault();
+            socket.emit('send message', $messageBox.val());
+            $messageBox.val('');
+        });
+
+        socket.on('new message', function(message){
+            $chat.append('<span class="glyphicon glyphicon-user"></span>'+"   "+'<b>' + message.nick +  ' : </b>'+ message.msg + "<br/>");
+        });
+
+      
+
+     });
+    </script>
+    </body>
 </html>

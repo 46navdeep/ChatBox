@@ -13,15 +13,34 @@ var server = app.listen(3000,function(req,res){
 
 var socket = io.listen(server);
 
+var nicknames = [];
+
 socket.on('connection', function (client){
-  console.log("User connected");
-  client.on('chat message', function(msg){
-  console.log('message: ' + msg);
-  socket.emit('chat message',msg);
-});
-  client.on('disconnect',function(){
-    console.log("User has disconnected");
-    socket.emit('disconnection');
-  })
+  client.on('new user',function(message,callback){
+    if(nicknames.indexOf(message) != -1)
+    callback(false);
+    else {
+      {
+        callback(true);
+        socket.nickname = message;
+        nicknames.push(socket.nickname);
+        socket.emit('usernames',nicknames);
+        updateNicknames();
+      }
+    }
+  });
+  function updateNicknames(){
+       socket.emit('usernames', nicknames);
+   }
+
+   socket.on('send message', function(message){
+       io.sockets.emit('new message', {msg: message, nick: socket.nickname});
+   });
+
+   socket.on('disconnect', function(message){
+       if(!socket.nickname) return;
+       nicknames.splice(nicknames.indexOf(socket.nickname), 1);
+       updateNicknames();
+   });
 
 });
