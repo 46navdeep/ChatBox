@@ -136,7 +136,7 @@
                     <div class="col-lg-3">
                         <div class="panel panel-default">
                         <div class="panel-heading"><center>ONLINE USERS</center></div>
-                        <div class="panel-body" id="users"></div>
+                        <div class="panel-body" id="users"></span></div>
                     </div>
                     </div>
                         <div class="col-lg-6" style="width:700px">
@@ -213,11 +213,11 @@
         });
 
       socket.on('disconnect',function(message){
-        $chat.append('<b>' + message.nick + '<p>has left the chat room</p>'+  ' </b>');
+        $chat.append('<span class="glyphicon glyphicon-user"></span>'+"   "+'<b>' + message.nick +  ' has left the chat </b>'+ "<br/>");
       });
 
       socket.on('new connect', function(message){
-        $chat.append('<b>' + message.nick + '<p>has joined the chat room</p>'+  ' </b>');
+        $chat.append('<span class="glyphicon glyphicon-user"></span>'+"   "+'<b>' + message.nick +  ' has joined the chat room </b>'+ "<br/>");
       })
 
      });
